@@ -1,0 +1,35 @@
+.container {
+  margin: 5%;
+}
+
+table, tr, td, th {
+  /* border: 1px solid gray; */
+}
+
+table {
+  border-collapse: collapse;
+}
+
+thead {
+  background-color: var(--primary);
+}
+
+th {
+  padding: .5rem;
+}
+
+td {
+  vertical-align: middle;
+  padding: 10px;
+  text-align: center;
+}
+
+td img {
+  width: 100px;
+  height: 100px;
+}
+
+.table {
+  margin: 0 5%;
+  width: 90%;
+}

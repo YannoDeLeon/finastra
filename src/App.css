@@ -1,0 +1,17 @@
+@import url('https://fonts.googleapis.com/css?family=Poppins:regular,bold,italic&subset=latin,latin-ext');
+
+:root {
+  --primary: #19A7CE;
+  --secondary: #146C94;
+}
+
+html, body {
+  background-color: #F6F1F1;
+  margin: 0;
+  padding: 0;
+  font-family: 'Poppins';
+  font-weight: normal;
+  width: 100%;
+  overflow-x: hidden;
+  height: auto;
+}
