@@ -2,12 +2,9 @@
   margin: 5%;
 }
 
-table, tr, td, th {
-  /* border: 1px solid gray; */
-}
-
 table {
   border-collapse: collapse;
+  width: 100%;
 }
 
 thead {
@@ -16,20 +13,25 @@ thead {
 
 th {
   padding: .5rem;
-}
-
-td {
-  vertical-align: middle;
-  padding: 10px;
   text-align: center;
+  vertical-align: middle;
+  cursor: default;
 }
 
-td img {
-  width: 100px;
-  height: 100px;
+th.sortable {
+  cursor: pointer;
+  user-select: none;
 }
 
-.table {
-  margin: 0 5%;
-  width: 90%;
+th.sortable:hover {
+  background-color: var(--secondary);
+}
+
+th img {
+  width: 20px;
+  margin: 0 0 -5px 5px;
+}
+
+th img.desc {
+  rotate: 180deg;
 }
