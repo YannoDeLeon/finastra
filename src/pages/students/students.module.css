@@ -25,6 +25,7 @@ th.sortable {
 
 th.sortable:hover {
   background-color: var(--secondary);
+  color: #fff;
 }
 
 th img {

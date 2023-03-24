@@ -7,4 +7,21 @@ td {
 td .img {
   width: 100px;
   height: 100px;
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+tbody tr {
+  pointer-events: none;
+  transition: all .1s ease-in-out;
+}
+
+td {
+  pointer-events: none;
+}
+
+tbody tr:hover {
+  background-color: var(--secondary);
+  color: #fff;
+  box-shadow: 0 8px 24px gray;
 }

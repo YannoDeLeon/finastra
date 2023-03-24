@@ -1,10 +1,13 @@
+import { useNavigate } from 'react-router-dom'
 import classes from "./table-row.module.css"
 import{ TStudentProfile } from "../../../store"
 
 const StudentTableRow = ({student}: {student: TStudentProfile}) => {
+  const navigate = useNavigate()
+  console.log(navigate)
 
   return <tr key={student.id}>
-    <td><img alt='student_pic'
+    <td><img onClick={() => navigate(`/user/${student.id}`)} alt='student_pic'
       className={classes.img}
       src={`/assets/user_${student.id}.jpg`}
       onError={({currentTarget}) => {
