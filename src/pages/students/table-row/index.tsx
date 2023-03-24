@@ -1,11 +1,7 @@
 import classes from "./table-row.module.css"
-import { TStudentProfile } from "../../../store"
+import{ TStudentProfile } from "../../../store"
 
 const StudentTableRow = ({student}: {student: TStudentProfile}) => {
-
-  const getTotalCourse = () : number => {
-    return student.courses?.length || 0
-  }
 
   return <tr key={student.id}>
     <td><img alt='student_pic'
@@ -21,7 +17,7 @@ const StudentTableRow = ({student}: {student: TStudentProfile}) => {
     <td>{student.email}</td>
     <td>{student.major}</td>
     <td>{student.status}</td>
-    <td>{getTotalCourse()}</td>
+    <td>{student.courseCount}</td>
   </tr>
 }
 

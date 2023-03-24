@@ -1,5 +1,6 @@
 import { createContext, ReactNode, useState, useEffect } from 'react'
 import API, { URLs } from '../utils/api'
+import Utils from '../utils'
 
 export type TStudent = {
   email: string,
@@ -42,7 +43,7 @@ export type TStudentProfile = {
   major: string,
   year: string,
   status: string,
-  courses: TCourse[]
+  courseCount: number
 }
 
 export type TSort = {
@@ -57,7 +58,8 @@ type TAppContext = {
   studentProfiles?: TStudentProfile[],
   isLoading: boolean,
   sortData: Function,
-  getStudentStatus: Function
+  getStudentStatus: Function,
+  getCoursesCount: Function,
 }
 
 type PropsType = {
@@ -78,7 +80,8 @@ const AppContext = createContext<TAppContext>({
   studentProfiles: [],
   isLoading: true,
   sortData: (order: TSort) => {},
-  getStudentStatus: (statusList: TStatus) => {}
+  getStudentStatus: (statusList: TStatus) => {},
+  getCoursesCount: () => {}
 })
 
 export const AppContextProvider = ({children}: PropsType) => {
@@ -117,7 +120,7 @@ export const AppContextProvider = ({children}: PropsType) => {
         major: profile?.[0].major || "N/A",
         year: profile?.[0].year || "N/A",
         status: profile?.[0].status ? getStatus(profile?.[0].status) : "",
-        courses: courses || []
+        courseCount: courses?.length ? countCourses(courses) : 0
       }
       return compiledData
     }
@@ -131,7 +134,6 @@ export const AppContextProvider = ({children}: PropsType) => {
 
   const getStatus = (status: TStatus[]) : string => {
     let statusType = ''
-    console.log(status)
     if(status?.length) {
       const latestStatus = status.reduce(
         (prev, cv) => {
@@ -147,36 +149,21 @@ export const AppContextProvider = ({children}: PropsType) => {
     return statusType || statusChart[0]
   }
 
-
-  const ascendingOrder = (column: string) => {
-    const sorted = studentProfiles?.sort((a, b) => {
-      if(a[column as keyof TStudentProfile] < b[column as keyof TStudentProfile]) {
-        return -1
-      }
-      if(a[column as keyof TStudentProfile] > b[column as keyof TStudentProfile]) {
-        return 1
-      }
-      return 0
-    })
-    setStudentList(sorted)
-  }
-
-  const descendingOrder = (column: string) => {
-    const sorted = studentProfiles?.sort((a, b) => {
-      if(a[column as keyof TStudentProfile] > b[column as keyof TStudentProfile]) {
-        return -1
-      }
-      if(a[column as keyof TStudentProfile] < b[column as keyof TStudentProfile]) {
-        return 1
-      }
-      return 0
-    })
-    setStudentList(sorted)
+  const countCourses = (courses: TCourse[]) : number => {
+    const filtered = Utils.uniqueObjArr([...courses], ['course_selection', 'semester_code'])
+    return filtered.length
   }
 
   const sortDataHandler = (order: TSort) => {
+    console.log('[sortOrder]', order)
+    let sorted;
     if(order.column && order.type && studentProfiles && studentProfiles.length) {
-      order.type === 'asc' ? ascendingOrder(order.column) : descendingOrder(order.column)
+      if(order.type === 'asc') {
+        sorted = Utils.sortAscending(studentProfiles, order.column)
+      } else {
+        sorted = Utils.sortDescending(studentProfiles, order.column)
+      }
+    setStudentList(sorted)
     }
   }
 
@@ -188,7 +175,8 @@ export const AppContextProvider = ({children}: PropsType) => {
     studentProfiles: studentProfiles,
     isLoading: isLoading,
     sortData: sortDataHandler,
-    getStudentStatus: getStatus
+    getStudentStatus: getStatus,
+    getCoursesCount: countCourses
   }
 
   return <AppContext.Provider value={context}>
