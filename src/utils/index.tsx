@@ -40,6 +40,25 @@ const Utils = {
     return sorted
   },
 
+  fuzzySearch: (termToSearch: string, searchPool: string) => {
+    const term = termToSearch.toLowerCase()
+    const pool = searchPool.toLowerCase()
+    let matches = ''
+      if(term === pool) {
+        matches = term
+      } else {
+        let idx = -1
+        term.split('').forEach((letter) => {
+          const foundIndex = pool.indexOf(letter, idx + 1)
+
+          if(foundIndex > 0) {
+            matches += letter
+            idx = foundIndex
+          }
+        })
+      }
+    return matches || null
+  }
 }
 
 export default Utils
