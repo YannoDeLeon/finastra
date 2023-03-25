@@ -32,14 +32,10 @@ const StudentsPage = () => {
       // const searchResult = objectsArray.filter((obj) => {
         const rate = .5
         const obj = studentProfiles[0]
-        console.log("[obj]", obj)
         const comparison = Object.keys(obj).map((key) => {
-          console.log("[key]", key)
           const result = Utils.fuzzySearch(term, obj[key as keyof TStudentProfile].toString())
-          console.log("[result]", result)
           return result
         })
-        console.log('[comparison]', comparison)
 
         // return true for match word > 50%
 
@@ -58,7 +54,7 @@ const StudentsPage = () => {
         <input className={classes.search} type='text' name="search" ref={searchRef} required />
         <button>Search</button>
       </form>
-        <table>
+        <table className={classes.studentTable}>
           <thead className={classes.header}>
             <tr>
               <th>{''}</th>

@@ -2,37 +2,37 @@
   margin: 5%;
 }
 
-table {
+.studentTable {
   border-collapse: collapse;
   width: 100%;
 }
 
-thead {
+.studentTable thead {
   background-color: var(--primary);
 }
 
-th {
+.studentTable th {
   padding: .5rem;
   text-align: center;
   vertical-align: middle;
   cursor: default;
 }
 
-th.sortable {
+.studentTable th.sortable {
   cursor: pointer;
   user-select: none;
 }
 
-th.sortable:hover {
+.studentTable th.sortable:hover {
   background-color: var(--secondary);
   color: #fff;
 }
 
-th img {
+.studentTable th img {
   width: 20px;
   margin: 0 0 -5px 5px;
 }
 
-th img.desc {
+.studentTable th img.desc {
   rotate: 180deg;
 }

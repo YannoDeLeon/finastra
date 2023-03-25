@@ -3,30 +3,81 @@
   padding: 0;
   display: flex;
   flex-direction: column;
+  align-items: center;
   width: 100%;
   height: auto;
 }
 
-th.sortable {
+.banner {
+  height: 250px;
+  width: 100%;
+  background-color: var(--secondary);
+  margin-bottom: 200px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+.infoContainer {
+  position: absolute;
+  top: 120px;
+}
+
+.profileImage img {
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  border: 5px solid var(--primary);
+}
+
+.infos {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 1rem;
+  color: black;
+  font-size: 1rem;
+  color: var(--secondary);
+  font-weight: 600;
+} 
+
+.coursesTable {
+  width: 70%;
+  border-collapse: collapse;
+}
+
+.coursesTable thead {
+  background-color: var(--primary);
+}
+
+.coursesTable th {
+  padding: .5rem;
+  text-align: center;
+  vertical-align: middle;
+  cursor: default;
+}
+
+.coursesTable th.sortable {
   cursor: pointer;
   user-select: none;
 }
 
-th.sortable:hover {
+.coursesTable th.sortable:hover {
   background-color: var(--secondary);
   color: #fff;
 }
 
-th img {
+.coursesTable th img {
   width: 20px;
   margin: 0 0 -5px 5px;
 }
 
-th img.desc {
+.coursesTable th img.desc {
   rotate: 180deg;
 }
 
-.currencySelect {
+.coursesTable .currencySelect {
   background-color: transparent;
   border: none;
   font-size: 1rem;

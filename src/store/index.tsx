@@ -72,6 +72,7 @@ type TAppContext = {
   getStudentStatus: Function,
   getCoursesCount: Function,
   getStudentCourses: Function,
+  getStudentProfile: Function,
   currencies: TCurrency,
 }
 
@@ -96,6 +97,7 @@ const AppContext = createContext<TAppContext>({
   getStudentStatus: (statusList: TStatus) => {},
   getCoursesCount: () => {},
   getStudentCourses: (studentId: string) => {},
+  getStudentProfile: (studentId: number) => {},
   currencies: {}
 })
 
@@ -189,6 +191,12 @@ export const AppContextProvider = ({children}: PropsType) => {
     }
   }
 
+  const getProfile = (id: number) => {
+    if(studentProfiles) {
+      return studentProfiles.filter(profile => profile.id === id)[0]
+    }
+  }
+
 
   const context: TAppContext = {
     students: studentList,
@@ -200,6 +208,7 @@ export const AppContextProvider = ({children}: PropsType) => {
     getStudentStatus: getStatus,
     getCoursesCount: countCourses,
     getStudentCourses: getCourses,
+    getStudentProfile: getProfile,
     currencies: currencyList || {},
   }
 

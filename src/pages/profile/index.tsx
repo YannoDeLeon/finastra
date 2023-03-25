@@ -1,19 +1,25 @@
 import { useContext, useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import classes from './profile.module.css'
-import AppContext, { TCourse, TCurrency } from '../../store'
+import AppContext, { TCourse, TCurrency, TStudentProfile } from '../../store'
 import Utils from '../../utils'
 import API from '../../utils/api'
 
 const Profile = () => {
   let { id } = useParams()
-  const { isLoading, getStudentCourses, courses, currencies } = useContext(AppContext)
+  const { isLoading,
+    getStudentCourses,
+    courses,
+    currencies,
+    getStudentProfile,
+    studentProfiles,
+  } = useContext(AppContext)
 
   const [ courseList, setCourseList] = useState<TCourse[]>()
-  const [ currency, setCurrency ] = useState<keyof TCurrency>()
-  const [ prevCurrency, setPrevCurrency ] = useState<keyof TCurrency>()
-  const [ exchangeRate, setExchangeRate ] = useState()
+  const [ currency, setCurrency ] = useState({prev: "", value: "USD"})
+  const [ exchangeRate, setExchangeRate ] = useState(1)
   const [ order, setOrder ] = useState('asc')
+  const [ profile, setProfile ] = useState<TStudentProfile>()
 
   const toggleOrder = () => {
     let sorted: TCourse[] = [];
@@ -31,29 +37,49 @@ const Profile = () => {
     setOrder(newOrder)
   }
 
-  const toggleCurrency = async (value: string) => {
-    let prevCurrency = "USD"
-    setCurrency((prev) => {
-      console.log("[prev]", prev)
-      // exchange rate
-      prevCurrency = prev?.toString() || "USD"
-      setPrevCurrency(prevCurrency)
-      return value
+  const toggleCurrency = async (newValue: string) => {
+    setCurrency((prevState: {prev: string, value: string}) => {
+      return {
+        prev: prevState.value,
+        value: newValue
+      }
     })
-
-    if(prevCurrency !== "USD") {
-      // const result = await API.getExchangeRate(prevCurrency, value)
-      // console.log('[result]]', result)
-    } else {
-      console.log("NOTHING TO EXCHANGE")
-    }
   }
 
   useEffect(() => {
-    if(currencies) {
-      toggleCurrency("USD")
+    const checkRates = async () => {
+      // CALL API
+      if(currency.prev && currency.value) {
+        const ERApi = await API.getExchangeRate(currency.prev, currency.value)
+        if(ERApi.result === "success") {
+          if(ERApi.conversion_rate) {
+            setExchangeRate(ERApi.conversion_rate)
+          } else {
+          }
+        } else {
+          alert(`Unexpected Error "${ERApi["error-type"]}"`)
+          setCurrency({prev: '', value: 'USD'})
+        }
+      }
     }
-  }, [currencies])
+
+    checkRates()
+  }, [currency])
+
+  useEffect(() => {
+    const computeFee = () => {
+      if(courseList && courseList.length) {
+        const newCourseList = courseList.map(course => {
+          const computedFee = parseInt(course.course_fee) * exchangeRate
+          course.course_fee = computedFee.toString()
+          return course
+        })
+        setCourseList([...newCourseList])
+      }
+    }
+    computeFee()
+
+  }, [exchangeRate])
 
   useEffect(() => {
     if(courses?.length) {
@@ -64,9 +90,33 @@ const Profile = () => {
     }
   }, [getStudentCourses, id, courses])
 
+  useEffect(() => {
+    if(studentProfiles && studentProfiles.length && id) {
+      const profileById = getStudentProfile(parseInt(id))
+      setProfile(profileById)
+    }
+  }, [studentProfiles, getStudentProfile, id])
+
   return (
     <div className={classes.profileContainer}>
-      <table>
+      <div className={classes.banner}>
+        <div className={classes.infoContainer}>
+          <div className={classes.profileImage}>
+            <img alt='profile' src={`/assets/user_${profile?.id}.jpg`}
+            onError={({currentTarget}) => {
+              currentTarget.onerror = null
+              currentTarget.src = `/assets/default.jpg`
+            }}/>
+          </div>
+          <div className={classes.infos}>
+            <span>{profile?.nickname ? `${profile.name} (${profile.nickname})` : profile?.name}</span>
+            <span>{profile?.major}</span>
+            <span>{profile?.year}</span>
+            <span>{profile?.status}</span>
+          </div>
+        </div>
+      </div>
+      <table className={classes.coursesTable}>
         <thead>
           <tr>
             <th className={classes.sortable} onClick={toggleOrder}>
@@ -80,6 +130,7 @@ const Profile = () => {
             <th><label htmlFor='currency'>Course Fee </label>[<select
                 className={classes.currencySelect}
                 id='currency'
+                value={currency.value}
                 onChange={(e) => toggleCurrency(e.target.value)}
               >
                 { Object.keys(currencies).map((item) =>
@@ -98,7 +149,10 @@ const Profile = () => {
               </td>
               <td>{course.course_name}</td>
               <td>{course.course_selection}</td>
-              <td><>{currencies[currency as keyof TCurrency].symbol} {course.course_fee}</></td>
+              <td>
+                {currencies[currency.value as keyof TCurrency].symbol}{" "}
+                {parseInt(course.course_fee).toFixed(currencies[currency.value.toString() as keyof TCurrency].decimal_digits)}
+              </td>
             </tr>)
             : <tr style={{textAlign: 'center'}}><td colSpan={7}><h1>No Data Found.</h1></td></tr>
             : <tr style={{textAlign: 'center'}}><td colSpan={7}><h1>LOADING...</h1></td></tr>
