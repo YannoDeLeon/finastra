@@ -4,7 +4,6 @@ import{ TStudentProfile } from "../../../store"
 
 const StudentTableRow = ({student}: {student: TStudentProfile}) => {
   const navigate = useNavigate()
-  console.log(navigate)
 
   return <tr key={student.id}>
     <td><img onClick={() => navigate(`/user/${student.id}`)} alt='student_pic'

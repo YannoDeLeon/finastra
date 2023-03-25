@@ -1,0 +1,33 @@
+.profileContainer {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: auto;
+}
+
+th.sortable {
+  cursor: pointer;
+  user-select: none;
+}
+
+th.sortable:hover {
+  background-color: var(--secondary);
+  color: #fff;
+}
+
+th img {
+  width: 20px;
+  margin: 0 0 -5px 5px;
+}
+
+th img.desc {
+  rotate: 180deg;
+}
+
+.currencySelect {
+  background-color: transparent;
+  border: none;
+  font-size: 1rem;
+}

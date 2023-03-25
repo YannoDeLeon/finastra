@@ -51,6 +51,17 @@ export type TSort = {
   type: string
 }
 
+export type TCurrency = {
+  [key: string]: {
+    symbol: string,
+    name: string,
+    symbol_native: string,
+    decimal_digits: number,
+    rounding: number,
+    code: string,
+    name_plural: string}
+}
+
 type TAppContext = {
   students?: TStudent[]
   courses?: TCourse[],
@@ -60,6 +71,8 @@ type TAppContext = {
   sortData: Function,
   getStudentStatus: Function,
   getCoursesCount: Function,
+  getStudentCourses: Function,
+  currencies: TCurrency,
 }
 
 type PropsType = {
@@ -81,7 +94,9 @@ const AppContext = createContext<TAppContext>({
   isLoading: true,
   sortData: (order: TSort) => {},
   getStudentStatus: (statusList: TStatus) => {},
-  getCoursesCount: () => {}
+  getCoursesCount: () => {},
+  getStudentCourses: (studentId: string) => {},
+  currencies: {}
 })
 
 export const AppContextProvider = ({children}: PropsType) => {
@@ -89,15 +104,17 @@ export const AppContextProvider = ({children}: PropsType) => {
   const [ studentList, setStudentList ] = useState<TStudent[]>()
   const [ courseList, setCourseList ] = useState<TCourse[]>()
   const [ profilesList, setProfilesList ] = useState<TProfile[]>()
+  const [ currencyList, setCurrencyList ] = useState<TCurrency>()
   const [ studentProfiles, setStudentProfiles ] = useState<TStudentProfile[]>()
   const [ isLoading, setIsLoading ] = useState(true)
 
   useEffect(() => {
     const fetchData = async () => {
-      const result = await API.batchGet([URLs.STUDENTS, URLs.COURSES, URLs.PROFILE])
+      const result = await API.batchGet([URLs.STUDENTS, URLs.COURSES, URLs.PROFILE, URLs.CURRENCY])
       setStudentList(result[0])
       setCourseList(result[1])
       setProfilesList(result[2])
+      setCurrencyList(result[3])
     }
 
     fetchData()
@@ -120,7 +137,7 @@ export const AppContextProvider = ({children}: PropsType) => {
         major: profile?.[0].major || "N/A",
         year: profile?.[0].year || "N/A",
         status: profile?.[0].status ? getStatus(profile?.[0].status) : "",
-        courseCount: courses?.length ? countCourses(courses) : 0
+        courseCount: courses?.length ? countCourses(courses) : 0,
       }
       return compiledData
     }
@@ -155,7 +172,6 @@ export const AppContextProvider = ({children}: PropsType) => {
   }
 
   const sortDataHandler = (order: TSort) => {
-    console.log('[sortOrder]', order)
     let sorted;
     if(order.column && order.type && studentProfiles && studentProfiles.length) {
       if(order.type === 'asc') {
@@ -164,6 +180,12 @@ export const AppContextProvider = ({children}: PropsType) => {
         sorted = Utils.sortDescending(studentProfiles, order.column)
       }
     setStudentList(sorted)
+    }
+  }
+
+  const getCourses = (id: string) => {
+    if(courseList) {
+      return courseList.filter(course => course.user_id === `user_${id}`)
     }
   }
 
@@ -176,7 +198,9 @@ export const AppContextProvider = ({children}: PropsType) => {
     isLoading: isLoading,
     sortData: sortDataHandler,
     getStudentStatus: getStatus,
-    getCoursesCount: countCourses
+    getCoursesCount: countCourses,
+    getStudentCourses: getCourses,
+    currencies: currencyList || {},
   }
 
   return <AppContext.Provider value={context}>
