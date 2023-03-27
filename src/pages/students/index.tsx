@@ -36,11 +36,12 @@ const StudentsPage = () => {
     const term = searchRef.current?.value
     if(studentProfiles && studentProfiles.length && term) {
       const objectsArray = [...studentProfiles]
+      const notIncluded = ['id', 'image', 'year', 'score']
 
       const searchResult = objectsArray.map((obj) => {
         let bestScore: number = -1
         Object.keys(obj).forEach((key) => {
-          if(key !== 'id') {
+          if(!notIncluded.includes(key)) {
             const score = Utils.fuzzySearch(term, obj[key as keyof TStudentProfile].toString())
             if(bestScore === -1) {
               bestScore = score
@@ -54,7 +55,7 @@ const StudentsPage = () => {
       })
 
       const sorted = Utils.sortAscending(searchResult, 'score')
-      const filtered = sorted.filter((obj) => obj.score <= 3)
+      const filtered = sorted.filter((obj) => obj.score <= 2)
       setStudentList([...filtered])
     } else {
       studentProfiles && setStudentList([...studentProfiles])
