@@ -1,5 +1,4 @@
 const Utils = {
-
   uniqueObjArr: (arrayToFilter: any[], keys: string[]) => {
     const filtered = arrayToFilter.filter((value, idx, arr) => {
       const foundIndex = arr.findIndex((value2) => {
@@ -11,8 +10,6 @@ const Utils = {
     })
     return filtered;
   },
-
-
   sortAscending: (arrayToSort: any[], sortBy: string) => {
     const sorted = arrayToSort?.sort((a, b) => {
       if(a[sortBy] < b[sortBy]) {
@@ -25,8 +22,6 @@ const Utils = {
     })
     return sorted
   },
-
-
   sortDescending: (arrayToSort: any[], sortBy: string) => {
     const sorted = arrayToSort?.sort((a, b) => {
       if(a[sortBy] > b[sortBy]) {
@@ -39,26 +34,28 @@ const Utils = {
     })
     return sorted
   },
-
-  fuzzySearch: (termToSearch: string, searchPool: string) => {
-    const term = termToSearch.toLowerCase()
-    const pool = searchPool.toLowerCase()
-    let matches = ''
-      if(term === pool) {
-        matches = term
-      } else {
-        let idx = -1
-        term.split('').forEach((letter) => {
-          const foundIndex = pool.indexOf(letter, idx + 1)
-
-          if(foundIndex > 0) {
-            matches += letter
-            idx = foundIndex
-          }
-        })
+  fuzzySearch: (pattern: string, haystack: string) => {
+    const track = Array(haystack.length + 1)
+      .fill(null)
+      .map(() => Array(pattern.length + 1).fill(null));
+    for (let i = 0; i <= pattern.length; i += 1) {
+      track[0][i] = i;
+    }
+    for (let j = 0; j <= haystack.length; j += 1) {
+      track[j][0] = j;
+    }
+    for (let j = 1; j <= haystack.length; j += 1) {
+      for (let i = 1; i <= pattern.length; i += 1) {
+        const indicator = pattern[i - 1] === haystack[j - 1] ? 0 : 1;
+        track[j][i] = Math.min(
+          track[j][i - 1] + 1, // deletion
+          track[j - 1][i] + 1, // insertion
+          track[j - 1][i - 1] + indicator // substitution
+        );
       }
-    return matches || null
-  }
+    }
+    return track[haystack.length][pattern.length];
+  },
 }
 
 export default Utils
