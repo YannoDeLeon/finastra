@@ -6,6 +6,7 @@
   align-items: center;
   width: 100%;
   height: auto;
+  margin-bottom: 100px;
 }
 
 .banner {
@@ -40,7 +41,7 @@
   font-size: 1rem;
   color: var(--secondary);
   font-weight: 600;
-} 
+}
 
 .coursesTable {
   width: 70%;
