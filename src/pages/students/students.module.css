@@ -2,6 +2,31 @@
   margin: 5%;
 }
 
+.form {
+  margin: 1rem 0;
+}
+
+.form input {
+  height: 1.5rem;
+  font-family: 'Poppins';
+}
+
+.form button {
+  height: 1.9rem;
+  font-family: 'Poppins';
+  box-sizing: border-box;
+  margin-left: 5px;
+  background-color: var(--primary);
+  color: black;
+  border: 1px solid var(--primary);
+  cursor: pointer;
+}
+
+.form button:active {
+  color: white;
+  background-color: var(--secondary);
+}
+
 .studentTable {
   border-collapse: collapse;
   width: 100%;

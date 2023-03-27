@@ -59,6 +59,7 @@ const StudentsPage = () => {
     } else {
       studentProfiles && setStudentList([...studentProfiles])
     }
+    setOrder({column: '', type: ''})
   }
 
   useEffect(() => {
@@ -69,8 +70,8 @@ const StudentsPage = () => {
 
   return(
     <div className={classes.container}>
-      <form onSubmit={(e) => handleSearch(e)}>
-        <input className={classes.search} type='text' name="search" ref={searchRef} />
+      <form onSubmit={(e) => handleSearch(e)} className={classes.form}>
+        <input type='text' name="search" ref={searchRef} />
         <button>Search</button>
       </form>
         <table className={classes.studentTable}>
