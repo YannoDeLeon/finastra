@@ -68,7 +68,6 @@ type TAppContext = {
   profiles?: TProfile[],
   studentProfiles?: TStudentProfile[],
   isLoading: boolean,
-  sortData: Function,
   getStudentStatus: Function,
   getCoursesCount: Function,
   getStudentCourses: Function,
@@ -93,7 +92,6 @@ const AppContext = createContext<TAppContext>({
   profiles: [],
   studentProfiles: [],
   isLoading: true,
-  sortData: (order: TSort) => {},
   getStudentStatus: (statusList: TStatus) => {},
   getCoursesCount: () => {},
   getStudentCourses: (studentId: string) => {},
@@ -173,18 +171,6 @@ export const AppContextProvider = ({children}: PropsType) => {
     return filtered.length
   }
 
-  const sortDataHandler = (order: TSort) => {
-    let sorted;
-    if(order.column && order.type && studentProfiles && studentProfiles.length) {
-      if(order.type === 'asc') {
-        sorted = Utils.sortAscending(studentProfiles, order.column)
-      } else {
-        sorted = Utils.sortDescending(studentProfiles, order.column)
-      }
-    setStudentList(sorted)
-    }
-  }
-
   const getCourses = (id: string) => {
     if(courseList) {
       return courseList.filter(course => course.user_id === `user_${id}`)
@@ -204,7 +190,6 @@ export const AppContextProvider = ({children}: PropsType) => {
     profiles: profilesList,
     studentProfiles: studentProfiles,
     isLoading: isLoading,
-    sortData: sortDataHandler,
     getStudentStatus: getStatus,
     getCoursesCount: countCourses,
     getStudentCourses: getCourses,
