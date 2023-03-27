@@ -42,7 +42,8 @@ const StudentsPage = () => {
         let bestScore: number = -1
         Object.keys(obj).forEach((key) => {
           if(!notIncluded.includes(key)) {
-            const score = Utils.fuzzySearch(term, obj[key as keyof TStudentProfile].toString())
+            const score = Utils.fuzzySearch(term.toLowerCase(),
+              obj[key as keyof TStudentProfile].toString().toLowerCase())
             if(bestScore === -1) {
               bestScore = score
             } else {
