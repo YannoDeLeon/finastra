@@ -3,6 +3,7 @@ import classes from './students.module.css'
 import AppContext, { TStudentProfile } from '../../store'
 import StudentTableRow from './table-row'
 import Utils from '../../utils'
+import fuzzyMatching from '../../utils/fuzzy'
 
 const StudentsPage = () => {
   const { studentProfiles, isLoading } = useContext(AppContext)
@@ -39,15 +40,14 @@ const StudentsPage = () => {
       const notIncluded = ['id', 'image', 'year', 'score']
 
       const searchResult = objectsArray.map((obj) => {
-        let bestScore: number = -1
+        let bestScore: number = 0
         Object.keys(obj).forEach((key) => {
           if(!notIncluded.includes(key)) {
-            const score = Utils.fuzzySearch(term.toLowerCase(),
-              obj[key as keyof TStudentProfile].toString().toLowerCase())
-            if(bestScore === -1) {
+            const score = fuzzyMatching(term, obj[key as keyof TStudentProfile].toString())
+            if(bestScore === 0) {
               bestScore = score
             } else {
-              bestScore = bestScore < score ? bestScore : score
+              bestScore = bestScore > score ? bestScore : score
             }
           }
           return obj[key as keyof TStudentProfile]
@@ -55,8 +55,9 @@ const StudentsPage = () => {
         return { ...obj, score: bestScore }
       })
 
-      const sorted = Utils.sortAscending(searchResult, 'score')
-      const filtered = sorted.filter((obj) => obj.score <= 2)
+      const sorted = Utils.sortDescending(searchResult, 'score')
+      const qualifier = term.length * 15 / 3
+      const filtered = sorted.filter((obj) => obj.score > qualifier)
       setStudentList([...filtered])
     } else {
       studentProfiles && setStudentList([...studentProfiles])
